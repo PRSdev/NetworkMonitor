@@ -49,8 +49,10 @@
 #endregion License Information (GPL v3)
 
 using NetworkMonitor.Properties;
+using ShareX.HelpersLib;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -61,11 +63,30 @@ namespace NetworkMonitor
         private NetworkMonitor networkMonitor;
         private bool forceClose;
 
+        #region Paths
+
+        private const string AppName = "Network Monitor";
+        public const string LogsFoldername = "Logs";
+        public static readonly string DefaultPersonalFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppName);
+        public static string LogsFolder => Path.Combine(DefaultPersonalFolder, LogsFoldername);
+
+        public static string LogsFilePath
+        {
+            get
+            {
+                string filename = string.Format("NetworkMonitor-Log-{0:yyyy-MM}.txt", DateTime.Now);
+                return Path.Combine(LogsFolder, filename);
+            }
+        }
+
+        #endregion Paths
+
         public MainForm()
         {
             InitializeComponent();
             Icon = Resources.Icon;
             niMain.Icon = Resources.Icon;
+            DebugHelper.Init(LogsFilePath);
 
             networkMonitor = new NetworkMonitor();
             networkMonitor.NetworkStatusChanged += NetworkMonitor_NetworkStatusChanged;
@@ -85,6 +106,8 @@ namespace NetworkMonitor
                     lvi.Text = DateTime.Now.ToString();
                     lvi.SubItems.Add(text);
                     lvMain.Items.Add(lvi);
+
+                    DebugHelper.WriteLine(lvi.SubItems[1].Text);
 
                     niMain.ShowBalloonTip(5000, "Network monitor", text, ToolTipIcon.Info);
                 });
