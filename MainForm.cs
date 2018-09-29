@@ -22,6 +22,7 @@
 */
 
 #endregion License Information (GPL v3)
+
 #region License Information (GPL v3)
 
 /*
@@ -50,6 +51,7 @@
 using NetworkMonitor.Properties;
 using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace NetworkMonitor
@@ -114,6 +116,25 @@ namespace NetworkMonitor
             Activate();
         }
 
+        private void CopyAll()
+        {
+            if (lvMain.Items.Count > 0)
+            {
+                StringBuilder sbLog = new StringBuilder();
+                foreach (ListViewItem lvi in lvMain.Items)
+                {
+                    foreach (ListViewItem.ListViewSubItem lvsi in lvi.SubItems)
+                    {
+                        sbLog.Append(lvsi.Text);
+                        sbLog.Append(" ");
+                    }
+
+                    sbLog.AppendLine();
+                }
+                Clipboard.SetText(sbLog.ToString().Trim());
+            }
+        }
+
         private void niMain_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -129,6 +150,7 @@ namespace NetworkMonitor
 
         private void tsmiCopyAll_Click(object sender, EventArgs e)
         {
+            CopyAll();
         }
 
         private void tsmiExit_Click(object sender, EventArgs e)
